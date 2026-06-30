@@ -72,6 +72,10 @@ namespace SimPe.Interfaces.Files
         // Deletes a resource from the package. Hood Checker's fix path removes
         // invalid SREL/FAMT records; the entry is gone from the next Build().
         void Remove(IPackedFileDescriptor pfd);
+
+        // Path the package was loaded from. Hood Checker derives the folder to
+        // scan sibling subhood *.package files.
+        string FileName { get; }
     }
 }
 
@@ -141,6 +145,10 @@ namespace SimPe.Packages
         // Original file bytes — we slice unchanged record bodies out of this
         // on Build() rather than carrying them in RAM as byte[] copies.
         private byte[] _source = Array.Empty<byte>();
+
+        // Path this package was loaded from (when opened via File.LoadFromFile).
+        // Hood Checker uses it to find sibling subhood *.package files.
+        public string FileName { get; internal set; } = string.Empty;
 
         internal GeneratableFile() { }
 
@@ -376,6 +384,10 @@ namespace SimPe.Packages
         }
 
         public void Close() { _source = Array.Empty<byte>(); }
+
+        // SimPE API the ported Hood Checker calls to discard pending edits.
+        // We never mutate packages we only read, so this is a no-op here.
+        public void ForgetUpdate() { }
         public void Dispose() => Close();
 
         // -----------------------------------------------------------------
@@ -471,7 +483,9 @@ namespace SimPe.Packages
         {
             using var fs = new FileStream(path, FileMode.Open, FileAccess.Read);
             using var br = new BinaryReader(fs);
-            return GeneratableFile.LoadFromStream(br);
+            var gf = GeneratableFile.LoadFromStream(br);
+            gf.FileName = path;
+            return gf;
         }
     }
 }

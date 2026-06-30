@@ -42,5 +42,31 @@ namespace LotExpander
 
         /// <summary>Grow the total expected work by <paramref name="i"/> units.</summary>
         void IncreaseWorkload(int i);
+
+        /// <summary>
+        /// Decide which lot to use as the graveyard for a neighborhood that has
+        /// invalid urnstones (only reached on the Remove/fix path). Replaces the
+        /// original WinForms SelectGraveyardDialog + retry MessageBox: the UI (or
+        /// a headless policy) presents <paramref name="potentialLots"/> and
+        /// returns a <see cref="GraveyardChoice"/>. A null return is treated the
+        /// same as "keep invalid urnstones for this hood".
+        /// </summary>
+        GraveyardChoice ResolveGraveyard(uint hoodId, List<R_DESC> potentialLots);
+    }
+
+    /// <summary>Outcome of a graveyard-selection prompt.</summary>
+    public sealed class GraveyardChoice
+    {
+        /// <summary>Chosen graveyard lot, or null if none was selected.</summary>
+        public R_DESC? SelectedLot;
+
+        /// <summary>Apply <see cref="SelectedLot"/> to every subhood, not just this one.</summary>
+        public bool UseForAll;
+
+        /// <summary>User opted to remove ALL invalid urnstones (destructive) instead of choosing a lot.</summary>
+        public bool RemoveAllInvalid;
+
+        /// <summary>Non-destructive default: keep invalid urnstones for this hood.</summary>
+        public static GraveyardChoice Keep() => new GraveyardChoice();
     }
 }
