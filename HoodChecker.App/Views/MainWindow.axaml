@@ -1,0 +1,107 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:HoodChecker.App.ViewModels"
+        xmlns:eng="using:LotExpander"
+        x:Class="HoodChecker.App.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Title="Hood Checker" Width="430" Height="470"
+        MinWidth="380" MinHeight="420"
+        WindowStartupLocation="CenterScreen">
+
+  <Window.DataTemplates>
+
+    <!-- 1. Welcome -->
+    <DataTemplate DataType="vm:WelcomePageViewModel">
+      <DockPanel Margin="16">
+        <Grid DockPanel.Dock="Bottom" Margin="0,12,0,0" ColumnDefinitions="Auto,*,Auto">
+          <Button Grid.Column="0" Content="Exit" Command="{Binding ExitCommand}" MinWidth="80"/>
+          <Button Grid.Column="2" Content="Start  ▸" Command="{Binding StartCommand}" MinWidth="90" IsDefault="True"/>
+        </Grid>
+        <TextBlock Text="{Binding Blurb}" TextWrapping="Wrap" VerticalAlignment="Top"/>
+      </DockPanel>
+    </DataTemplate>
+
+    <!-- 2. Choose a Neighbourhood -->
+    <DataTemplate DataType="vm:ChooseHoodPageViewModel">
+      <DockPanel Margin="16">
+        <TextBlock DockPanel.Dock="Top" Text="Choose a Neighbourhood:" Margin="0,0,0,8"/>
+        <Grid DockPanel.Dock="Bottom" Margin="0,12,0,0" ColumnDefinitions="Auto,Auto,*,Auto">
+          <Button Grid.Column="0" Content="◂ Back" Command="{Binding BackCommand}" MinWidth="80"/>
+          <Button Grid.Column="1" Content="Browse…" Command="{Binding BrowseCommand}" MinWidth="90" Margin="8,0,0,0"/>
+          <Button Grid.Column="3" Content="Next ▸" Command="{Binding NextCommand}" MinWidth="80" IsDefault="True"/>
+        </Grid>
+        <ListBox ItemsSource="{Binding Hoods}" SelectedItem="{Binding SelectedHood}"
+                 BorderThickness="1" BorderBrush="#888">
+          <ListBox.ItemTemplate>
+            <DataTemplate x:DataType="eng:NeighborhoodInfo">
+              <StackPanel Orientation="Horizontal" Spacing="8">
+                <TextBlock Text="{Binding Code}" FontWeight="SemiBold" Width="44"/>
+                <TextBlock Text="{Binding Name}"/>
+              </StackPanel>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </DockPanel>
+    </DataTemplate>
+
+    <!-- 3. Check vs Remove -->
+    <DataTemplate DataType="vm:ConfirmPageViewModel">
+      <DockPanel Margin="16">
+        <TextBlock DockPanel.Dock="Top" Text="{Binding HoodName}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,12"/>
+        <Grid DockPanel.Dock="Bottom" Margin="0,12,0,0" ColumnDefinitions="Auto,*,Auto,Auto">
+          <Button Grid.Column="0" Content="◂ Back" Command="{Binding BackCommand}" MinWidth="80"/>
+          <Button Grid.Column="2" Content="Remove" Command="{Binding RemoveCommand}" MinWidth="90"/>
+          <Button Grid.Column="3" Content="Check" Command="{Binding CheckCommand}" MinWidth="80" Margin="8,0,0,0" IsDefault="True"/>
+        </Grid>
+        <TextBlock Text="{Binding Blurb}" TextWrapping="Wrap" VerticalAlignment="Top"/>
+      </DockPanel>
+    </DataTemplate>
+
+    <!-- 4. Options -->
+    <DataTemplate DataType="vm:OptionsPageViewModel">
+      <DockPanel Margin="16">
+        <TextBlock DockPanel.Dock="Top" Text="{Binding HoodName}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,12"/>
+        <Grid DockPanel.Dock="Bottom" Margin="0,12,0,0" ColumnDefinitions="Auto,*,Auto">
+          <Button Grid.Column="0" Content="◂ Back" Command="{Binding BackCommand}" MinWidth="80"/>
+          <Button Grid.Column="2" Content="Finish" Command="{Binding FinishCommand}" MinWidth="90" IsDefault="True"/>
+        </Grid>
+        <StackPanel Spacing="14" VerticalAlignment="Top">
+          <TextBlock Text="Select options desired, then click on Finish to check this neighborhood."
+                     TextWrapping="Wrap"/>
+          <CheckBox Content="Show all memories (not just invalid ones)."
+                    IsChecked="{Binding ShowAllMemories}"/>
+        </StackPanel>
+      </DockPanel>
+    </DataTemplate>
+
+    <!-- 5. Results -->
+    <DataTemplate DataType="vm:ResultsPageViewModel">
+      <DockPanel Margin="16">
+        <TextBlock DockPanel.Dock="Top" Text="{Binding HoodName}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,8"/>
+        <Grid DockPanel.Dock="Bottom" Margin="0,12,0,0" ColumnDefinitions="Auto,*,Auto,Auto">
+          <Button Grid.Column="0" Content="Exit" Command="{Binding ExitCommand}" MinWidth="80"/>
+          <Button Grid.Column="2" Content="Save…" Command="{Binding SaveCommand}" MinWidth="80"/>
+          <Button Grid.Column="3" Content="Restart" Command="{Binding RestartCommand}" MinWidth="80" Margin="8,0,0,0"/>
+        </Grid>
+        <Panel>
+          <ListBox ItemsSource="{Binding ReportLines}" FontFamily="Menlo,Consolas,monospace"
+                   FontSize="12" BorderThickness="1" BorderBrush="#888"
+                   IsVisible="{Binding !IsRunning}">
+            <ListBox.ItemTemplate>
+              <DataTemplate x:DataType="x:String">
+                <TextBlock Text="{Binding}" />
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+          <StackPanel IsVisible="{Binding IsRunning}" HorizontalAlignment="Center" VerticalAlignment="Center" Spacing="10">
+            <TextBlock Text="Checking neighborhood…" HorizontalAlignment="Center"/>
+            <ProgressBar IsIndeterminate="True" Width="180"/>
+          </StackPanel>
+        </Panel>
+      </DockPanel>
+    </DataTemplate>
+
+  </Window.DataTemplates>
+
+  <ContentControl Content="{Binding CurrentPage}"/>
+</Window>

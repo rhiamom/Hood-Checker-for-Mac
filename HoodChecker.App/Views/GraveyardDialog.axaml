@@ -1,0 +1,24 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:eng="using:LotExpander"
+        x:Class="HoodChecker.App.Views.GraveyardDialog"
+        Title="Select Graveyard" Width="360" Height="430"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+  <DockPanel Margin="14">
+    <TextBlock DockPanel.Dock="Top" x:Name="Prompt" TextWrapping="Wrap" Margin="0,0,0,8"/>
+    <Grid DockPanel.Dock="Bottom" Margin="0,12,0,0" ColumnDefinitions="Auto,*,Auto">
+      <Button Grid.Column="0" x:Name="CancelButton" Content="Cancel" MinWidth="80" Click="OnCancel"/>
+      <Button Grid.Column="2" x:Name="OkButton" Content="OK" MinWidth="80" IsDefault="True" Click="OnOk"/>
+    </Grid>
+    <CheckBox DockPanel.Dock="Bottom" x:Name="UseForAll" Margin="0,8,0,0"
+              Content="Use this graveyard for all subhoods."/>
+    <ListBox x:Name="LotList" BorderThickness="1" BorderBrush="#888">
+      <ListBox.ItemTemplate>
+        <DataTemplate x:DataType="eng:R_DESC">
+          <TextBlock Text="{Binding LotName}"/>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+  </DockPanel>
+</Window>

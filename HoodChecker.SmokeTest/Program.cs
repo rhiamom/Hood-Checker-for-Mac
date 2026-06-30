@@ -5,6 +5,14 @@
 
 using LotExpander;
 
+if (args.Length >= 1 && args[0] == "--list")
+{
+    Console.WriteLine("Neighborhoods folder: " + (SimsPaths.NeighborhoodsFolder ?? "(not found)"));
+    foreach (NeighborhoodInfo nb in NeighborhoodCatalog.List())
+        Console.WriteLine($"  {nb.Code}: {nb.Name}");
+    return;
+}
+
 if (args.Length < 1)
 {
     Console.WriteLine("Hood Checker for Mac — engine smoke test");
