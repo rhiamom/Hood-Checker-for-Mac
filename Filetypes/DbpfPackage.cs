@@ -68,6 +68,10 @@ namespace SimPe.Interfaces.Files
         // Returns every resource of the given type. Hood Checker's resource
         // handlers enumerate by type (FAMI, SREL, FAMT, NGBH, IDNO, CTSS, …).
         IPackedFileDescriptor[] FindFiles(uint type);
+
+        // Deletes a resource from the package. Hood Checker's fix path removes
+        // invalid SREL/FAMT records; the entry is gone from the next Build().
+        void Remove(IPackedFileDescriptor pfd);
     }
 }
 
@@ -248,6 +252,11 @@ namespace SimPe.Packages
                 if (e.Type == type)
                     hits.Add(e);
             return hits.ToArray();
+        }
+
+        public void Remove(IPackedFileDescriptor pfd)
+        {
+            _entries.Remove((PackedFileDescriptor)pfd);
         }
 
         public IPackedFile Read(IPackedFileDescriptor pfd)
