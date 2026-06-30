@@ -1,0 +1,19 @@
+# Build output
+bin/
+obj/
+[Dd]ebug/
+[Rr]elease/
+
+# .NET
+*.user
+project.lock.json
+*.nuget.props
+*.nuget.targets
+
+# macOS
+.DS_Store
+
+# IDE
+.vs/
+.idea/
+.vscode/
